@@ -1,0 +1,28 @@
+$cell-size: 50px;
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.ms-grid {
+    border-spacing: 0;
+
+    td {
+        padding: 0;
+
+        button {
+            width: $cell-size;
+            height: $cell-size;
+
+            &.opened {
+                font-size: 1.1rem;
+                font-weight: bold;
+
+                pointer-events: none;
+                background-color: #ccc;
+                border-style: inset;
+            }
+        }
+    }
+}
