@@ -3,6 +3,7 @@ use yew::{function_component, html};
 
 mod cell;
 mod grid;
+mod random;
 
 #[function_component(App)]
 fn app() -> Html {
