@@ -32,7 +32,15 @@ pub fn grid(props: &GridProps) -> Html {
                 (true, cell::Kind::Closed) => cell::Kind::Marked,
                 (true, cell::Kind::Marked) => cell::Kind::Closed,
                 (false, cell::Kind::Closed) => {
-                    cell::Kind::Opened(mines[index], mine_neighbors_count(&mines, size, row, col))
+                    if mines[index] {
+                        cell::Kind::Opened(true, 0)
+                    } else {
+                        let neighbors_count = mine_neighbors_count(&mines, size, row, col);
+                        if neighbors_count == 0 {
+                            propagate_zeros(&mut new_cells, &mines, size, row, col);
+                        }
+                        cell::Kind::Opened(false, neighbors_count)
+                    }
                 }
                 (false, cell::Kind::Marked) => return,
                 (_, cell::Kind::Opened(_, _)) => unreachable!(),
@@ -92,4 +100,20 @@ fn mine_neighbors_count(mines: &[bool], size: usize, row: usize, col: usize) -> 
         }
     }
     count
+}
+
+fn propagate_zeros(cells: &mut [cell::Kind], mines: &[bool], size: usize, row: usize, col: usize) {
+    for i in row.saturating_sub(1)..=(row + 1).clamp(0, size - 1) {
+        for j in col.saturating_sub(1)..=(col + 1).clamp(0, size - 1) {
+            let idx = i * size + j;
+            if let cell::Kind::Opened(_, _) = cells[idx] {
+                continue;
+            }
+            let neighbors_count = mine_neighbors_count(mines, size, i, j);
+            cells[idx] = cell::Kind::Opened(false, neighbors_count);
+            if neighbors_count == 0 {
+                propagate_zeros(cells, mines, size, i, j);
+            }
+        }
+    }
 }

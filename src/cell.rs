@@ -18,7 +18,7 @@ pub fn cell(props: &Props) -> Html {
     } = props.clone();
 
     let label = match kind {
-        Kind::Closed => format!("({row}, {col})"),
+        Kind::Closed => "".to_string(),
         Kind::Opened(false, n) => format!("{n}"),
         Kind::Opened(true, _) => "💣".to_string(),
         Kind::Marked => "🚩".to_string(),
